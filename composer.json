@@ -1,0 +1,22 @@
+{
+    "name": "pendasi/rest",
+    "description": "Pendasi PHP ORM + REST API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ton Nom",
+            "email": "ton.email@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pendasi\\Rest\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
