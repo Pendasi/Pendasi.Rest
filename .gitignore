@@ -1,0 +1,79 @@
+# =========================
+# DEPENDENCIES
+# =========================
+/vendor/
+/composer.lock
+
+# =========================
+# ENV / CONFIG
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / EDITOR
+# =========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# LOGS
+# =========================
+*.log
+logs/
+storage/logs/
+
+# =========================
+# CACHE / TEMP
+# =========================
+cache/
+tmp/
+temp/
+*.cache
+
+# =========================
+# UPLOADS (important pour ton FileUploader)
+# =========================
+uploads/
+public/uploads/
+storage/uploads/
+
+# =========================
+# TEST / DEBUG
+# =========================
+phpunit.xml
+.phpunit.result.cache
+
+# =========================
+# BUILD FILES
+# =========================
+dist/
+build/
+
+# =========================
+# NODE (si frontend plus tard)
+# =========================
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# =========================
+# SECURITY
+# =========================
+*.pem
+*.key
+*.crt
+
+# =========================
+# OPTIONAL (à toi de décider)
+# =========================
+# public/index.php   ← à ignorer seulement si exemple
