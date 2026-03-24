@@ -48,6 +48,12 @@ class FileUploader {
         // Nom sécurisé
         $filename = self::sanitizeFilename($filename);
         $tempFile = rtrim($path,'/').'/'.$filename.'.part';
+        $path = rtrim($path, '/');
+        if (!preg_match('#^(/|[a-zA-Z]:\\\)#', $path)) {
+            // Si le chemin n'est pas absolu, on le rend relatif au dossier du projet
+            $path = __DIR__ . '/../../../../' . $path;
+        }
+        if (!is_dir($path)) mkdir($path, 0755, true);
 
         // Ajouter le chunk
         $out = fopen($tempFile, $chunkIndex === 0 ? 'wb' : 'ab');
