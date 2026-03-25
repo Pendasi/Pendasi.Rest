@@ -135,22 +135,67 @@ class Router
         usort(self::$routes, fn($a, $b) => $b['score'] <=> $a['score'] ?: $a['order'] <=> $b['order']);
         self::$sorted = true;
     }
+private static function getRequestPath(): string
+{
+    // URL brute
+    $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
-    private static function getRequestPath(): string
-    {
-        $fromQuery = $_GET['url'] ?? null;
-        if ($fromQuery) return trim($fromQuery, '/');
+    // Nettoyer query string
+    $uri = parse_url($uri, PHP_URL_PATH) ?: '/';
 
-        $path = $_SERVER['PATH_INFO'] ?? $_SERVER['REQUEST_URI'] ?? '/';
-        $parsed = parse_url($path, PHP_URL_PATH) ?: '/';
-        $basePath = trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+    // Récupérer le dossier du projet (ex: /MutuApi)
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    $basePath = str_replace('\\', '/', dirname($scriptName));
 
-        if ($basePath && str_starts_with(trim($parsed, '/'), $basePath)) {
-            $parsed = substr(trim($parsed, '/'), strlen($basePath . '/'));
-        }
-
-        return $parsed;
+    // Supprimer le basePath de l'URI
+    if ($basePath !== '/' && str_starts_with($uri, $basePath)) {
+        $uri = substr($uri, strlen($basePath));
     }
+
+    // Nettoyer
+    $uri = '/' . trim($uri, '/');
+
+    return $uri === '/' ? '/' : rtrim($uri, '/');
+}
+private static function inferResourceFromController(string $controller): string
+{
+    // Extraire le nom de classe
+    if (str_contains($controller, '\\')) {
+        $controller = substr($controller, strrpos($controller, '\\') + 1);
+    }
+
+    // Supprimer "Controller"
+    $resource = preg_replace('/Controller$/i', '', $controller);
+
+    // Format REST
+    $resource = strtolower($resource);
+
+    // Pluriel simple
+    if (!str_ends_with($resource, 's')) {
+        $resource .= 's';
+    }
+
+    return $resource;
+}
+    public static function api(
+    string $controller,
+    string $prefix = '',
+    string $version = '',
+    array $middlewares = []
+): void {
+    $resource = self::inferResourceFromController($controller);
+
+    // Construction URI propre
+    $uri = trim($prefix . '/' . $version . '/' . $resource, '/');
+    $uri = '/' . $uri;
+
+    self::get($uri, $controller . '@index', $middlewares);
+    self::post($uri, $controller . '@store', $middlewares);
+    self::get($uri . '/{id}', $controller . '@show', $middlewares);
+    self::put($uri . '/{id}', $controller . '@update', $middlewares);
+    self::patch($uri . '/{id}', $controller . '@update', $middlewares);
+    self::delete($uri . '/{id}', $controller . '@delete', $middlewares);
+}
 
     private static function parseControllerSpec(string $controllerSpec): array
     {
